@@ -14,7 +14,8 @@ import {
   Globe,
   Settings,
   Flame,
-  LayoutGrid
+  LayoutGrid,
+  Lock
 } from "lucide-react";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "./firebase";
@@ -37,7 +38,10 @@ const DEFAULT_PREFS: VisualPreferences = {
 export default function App() {
   const [article, setArticle] = useState<Article>(DEFAULT_ARTICLE);
   const [preferences, setPreferences] = useState<VisualPreferences>(DEFAULT_PREFS);
-  const [layoutMode, setLayoutMode] = useState<"read" | "edit" | "split">("read");
+  const [layoutMode, setLayoutMode] = useState<"read" | "edit">("read");
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Load state on mount and subscribe to Firestore for global real-time synchronization
@@ -194,20 +198,6 @@ export default function App() {
                 <Edit3 className="w-3.5 h-3.5" />
                 Edit
               </button>
-
-              <button
-                id="btn-layout-split"
-                onClick={() => setLayoutMode("split")}
-                className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-label uppercase tracking-wider font-semibold transition ${
-                  layoutMode === "split" 
-                    ? "bg-brand-primary text-brand-bg shadow-brand-sm font-bold" 
-                    : "text-brand-muted-text hover:bg-brand-subtle hover:text-brand-text"
-                }`}
-                title="Live split desk side-by-side"
-              >
-                <Columns className="w-3.5 h-3.5" />
-                Split Desk
-              </button>
             </div>
 
             {/* Mobile-Friendly Toggle Mode buttons */}
@@ -226,7 +216,7 @@ export default function App() {
                 id="mobile-btn-edit"
                 onClick={() => setLayoutMode("edit")}
                 className={`p-1.5 rounded transition ${
-                  layoutMode === "edit" || layoutMode === "split" ? "bg-brand-primary text-brand-bg" : "text-brand-muted-text"
+                  layoutMode === "edit" ? "bg-brand-primary text-brand-bg" : "text-brand-muted-text"
                 }`}
                 title="Modify draft"
               >
@@ -267,20 +257,80 @@ export default function App() {
               </div>
             )}
 
-            {/* Edit / Split Mode: Unified workstation layout */}
-            {(layoutMode === "edit" || layoutMode === "split") && (
+            {/* Edit Mode: Unified workstation layout */}
+            {layoutMode === "edit" && (
               <div 
                 id="editor-view-container"
                 className="max-w-7xl mx-auto h-[calc(100vh-140px)] min-h-[560px]"
               >
-                <MarkdownEditor
-                  article={article}
-                  onChangeArticle={handleUpdateArticle}
-                  onResetToDefault={handleResetToDefault}
-                  onClose={() => setLayoutMode("read")}
-                  initialViewMode={layoutMode === "split" ? "split" : "editor"}
-                  preferences={preferences}
-                />
+                {!isUnlocked ? (
+                  <div className="flex items-center justify-center h-full w-full max-w-lg mx-auto py-12 px-6">
+                    <div className="bg-[#1C1714] text-[#E8DFD4] rounded-lg border-2 border-[#4A3F35] shadow-brand ornate-frame p-8 text-center relative overflow-hidden w-full">
+                      <div className="paper-texture-overlay opacity-30" />
+                      <div className="relative z-10 flex flex-col items-center">
+                        <div className="p-4 bg-[#C9A962] text-[#1C1714] rounded-full mb-4 shadow-brand-sm">
+                          <Lock className="w-8 h-8" />
+                        </div>
+                        
+                        <h2 className="font-display font-bold text-xl md:text-2xl text-white uppercase tracking-widest leading-tight mb-2">
+                          Archival Station Locked
+                        </h2>
+                        <p className="text-xs text-[#9C8B7A] font-serif max-w-sm leading-relaxed mb-6">
+                          Article editing is locked. Please enter soy password-iendo to use :3:3:3
+                        </p>
+
+                        <form 
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            if (passwordInput.trim() === "mastermanipulator") {
+                              setIsUnlocked(true);
+                              setPasswordError("");
+                            } else {
+                              setPasswordError("Authority passcode rejected. Access denied.");
+                            }
+                          }}
+                          className="w-full space-y-4"
+                        >
+                          <div className="relative">
+                            <input
+                              type="password"
+                              placeholder="Passcode..."
+                              value={passwordInput}
+                              onChange={(e) => {
+                                setPasswordInput(e.target.value);
+                                if (passwordError) setPasswordError("");
+                              }}
+                              className="w-full px-4 py-2.5 bg-[#251E19] text-[#E8DFD4] placeholder-[#5C4F43] rounded border border-[#4A3F35] text-sm text-center tracking-[0.25em] font-mono focus:outline-none focus:ring-1 focus:ring-[#C9A962] transition"
+                              autoFocus
+                            />
+                          </div>
+
+                          {passwordError && (
+                            <p className="text-rose-400 text-xs font-semibold tracking-wide animate-pulse">
+                              {passwordError}
+                            </p>
+                          )}
+
+                          <button
+                            type="submit"
+                            className="w-full py-2.5 bg-[#C9A962] text-[#1C1714] rounded font-label text-xs uppercase tracking-wider font-bold shadow-brand-sm hover:bg-[#D9B972] transition cursor-pointer"
+                          >
+                            Authenticate Access
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <MarkdownEditor
+                    article={article}
+                    onChangeArticle={handleUpdateArticle}
+                    onResetToDefault={handleResetToDefault}
+                    onClose={() => setLayoutMode("read")}
+                    initialViewMode="editor"
+                    preferences={preferences}
+                  />
+                )}
               </div>
             )}
 
@@ -291,11 +341,11 @@ export default function App() {
       {/* Decorative Editorial Footer */}
       <footer className="mt-12 text-center text-[10px] font-mono text-brand-accent/75 max-w-2xl mx-auto px-4 sm:px-6">
         <p className="border-t border-brand-border/40 pt-4 leading-relaxed">
-          Chronicle Publisher is built on secure local indices and incorporates deep physical accessibility modes 
-          supporting high contrast palettes, line tracking anchors, and assistive Screen Reading synthesizers.
+          ts is soooooooooooooooooooooooo cool and totally 100% human made rawr ex dee@!! ahaha
+          meow meow meow meow (slowed + reverb)
         </p>
         <p className="mt-1">
-          &copy; 1996 - {new Date().getFullYear()} Single-Post International Publication Group. All rights reserved.
+          &copy; 1996 - {new Date().getFullYear()} xxxx name xd. No rights reserved.
         </p>
       </footer>
     </div>
