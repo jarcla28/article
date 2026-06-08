@@ -1,0 +1,6 @@
+{
+  "name": "Single Article Publisher",
+  "description": "An elegant, highly accessible single-article publication platform with integrated live Markdown editor and local persistence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

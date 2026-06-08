@@ -1,0 +1,33 @@
+{
+  "entities": {
+    "Article": {
+      "title": "Article",
+      "description": "A global article manuscript",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "content": { "type": "string" },
+        "author": { "type": "string" },
+        "authorRole": { "type": "string" },
+        "authorAvatar": { "type": "string" },
+        "publishedDate": { "type": "string" },
+        "category": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "readTime": { "type": "string" },
+        "draftLabel": { "type": "string" },
+        "volumeLabel": { "type": "string" }
+      },
+      "required": ["title", "subtitle", "content", "author", "authorRole", "publishedDate", "category"]
+    }
+  },
+  "firestore": {
+    "/articles/{articleId}": {
+      "schema": "Article",
+      "description": "Store the global collaborative article manuscripts"
+    }
+  }
+}

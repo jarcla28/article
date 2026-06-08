@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net (Default-deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isValidArticle(data) {
+      return data.title is string && data.title.size() <= 200 &&
+             data.subtitle is string && data.subtitle.size() <= 1000 &&
+             data.content is string && data.content.size() <= 100000 &&
+             data.author is string && data.author.size() <= 200 &&
+             data.authorRole is string && data.authorRole.size() <= 300 &&
+             (!('publishedDate' in data) || (data.publishedDate is string && data.publishedDate.size() <= 100)) &&
+             (!('category' in data) || (data.category is string && data.category.size() <= 100)) &&
+             (!('authorAvatar' in data) || (data.authorAvatar is string && data.authorAvatar.size() <= 500)) &&
+             (!('readTime' in data) || (data.readTime is string && data.readTime.size() <= 100)) &&
+             (!('draftLabel' in data) || (data.draftLabel is string && data.draftLabel.size() <= 100)) &&
+             (!('volumeLabel' in data) || (data.volumeLabel is string && data.volumeLabel.size() <= 100)) &&
+             (!('tags' in data) || (data.tags is list && data.tags.size() <= 20 && (data.tags.size() == 0 || data.tags[0] is string)));
+    }
+
+    // Articles collection rules
+    match /articles/{articleId} {
+      allow get: if isValidId(articleId);
+      allow create, update: if isValidId(articleId) && isValidArticle(incoming());
+    }
+  }
+}

@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Cinzel:wght@400..900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Crimson Pro", Georgia, Cambria, serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-label: "Cinzel", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-brand-bg: #1C1714;              /* Deep Mahogany */
+  --color-brand-sidebar: #251E19;         /* Aged Oak elevation */
+  --color-brand-text: #E8DFD4;            /* Antique Parchment text */
+  --color-brand-primary: #C9A962;          /* Polished Brass accent */
+  --color-brand-accent: #C9A962;           /* Polished Brass hover/active */
+  --color-brand-light: #251E19;            /* Aged Oak surface */
+  --color-brand-subtle: #3D332B;           /* Worn Leather tertiary bg */
+  --color-brand-border: #4A3F35;           /* Wood Grain borders */
+  --color-brand-success-bg: #8B2635;       /* Library Crimson badge back */
+  --color-brand-success-text: #E8DFD4;     /* Antique Parchment highlight text */
+  --color-brand-muted-text: #9C8B7A;       /* Faded Ink secondary */
+  
+  --shadow-brand-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-brand: 0 8px 24px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Base style resets */
+body {
+  background-color: var(--color-brand-bg);
+  color: var(--color-brand-text);
+  font-family: var(--font-serif);
+}
+
+/* Style markdown elements with classical academic rigor */
+.markdown-body {
+  font-family: var(--font-serif);
+  line-height: 1.8;
+}
+
+/* Rounded eye-ease rounded readable option */
+.font-dyslexia {
+  font-family: "Comic Sans MS", "Chalkboard SE", sans-serif !important;
+  word-spacing: 0.16em !important;
+  letter-spacing: 0.03em !important;
+}
+
+.font-reader-sans {
+  font-family: "Inter", system-ui, sans-serif !important;
+}
+
+/* Custom classical scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-brand-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-subtle);
+  border: 1px solid var(--color-brand-border);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-accent);
+}
+
+/* --- Atmospheric Overlay Effects --- */
+
+/* Fixed paper grain texture filter */
+.paper-texture-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Library dim candle vignette lighting */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+  background: radial-gradient(ellipse at center, transparent 30%, transparent 60%, rgba(28, 23, 20, 0.45) 100%);
+}
+
+/* Cathedral arch image frame */
+.arch-top-media {
+  border-radius: 40% 40% 0 0 / 20% 20% 0 0;
+}
+
+/* Antique photographic sepia conversion */
+.sepia-image {
+  filter: sepia(0.65) contrast(0.92) brightness(0.85);
+  transition: filter 0.7s ease-out, transform 0.7s ease-out;
+}
+.sepia-image:hover {
+  filter: sepia(0.1) contrast(1.02) brightness(1);
+}
+
+/* Ornate decorative framing brackets */
+.ornate-frame {
+  position: relative;
+}
+.ornate-frame::before,
+.ornate-frame::after {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #C9A962;
+  pointer-events: none;
+  z-index: 10;
+}
+.ornate-frame::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+.ornate-frame::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Illuminated classical drop caps */
+.drop-cap::first-letter {
+  font-family: var(--font-label);
+  font-size: 4.5rem;
+  float: left;
+  margin-right: 0.75rem;
+  line-height: 0.82;
+  color: #C9A962;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  font-weight: bold;
+}
+
+/* Ornate gradient line dividers */
+.ornate-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #4A3F35 20%, #C9A962 50%, #4A3F35 80%, transparent 100%);
+  margin: 2rem 0;
+}
+.ornate-divider::after {
+  content: "✦";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #C9A962;
+  font-size: 14px;
+  background-color: #251E19;
+  padding: 0 16px;
+}
+
+/* Engraved Text pressed appearance */
+.engraved-text {
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7), -1px -1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Brass button metallic gradient definition */
+.brass-btn {
+  background: linear-gradient(180deg, #D4B872 0%, #C9A962 50%, #B8953F 100%);
+  color: #1C1714;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+}
+.brass-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.2), 0 4px 12px rgba(201, 169, 98, 0.35);
+}
+.brass-btn:disabled {
+  opacity: 0.5;
+  filter: none;
+  box-shadow: none;
+}
+
